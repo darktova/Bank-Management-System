@@ -1,10 +1,12 @@
 #pragma once
 #include "Account.h"
-#include "Transaction.h"
 
 class Bank
 {
 private:
+	int getUsersN();
+	list<Account> users;
+	void services(Account&);
 
 public:
 	Bank();

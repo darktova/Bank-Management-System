@@ -3,18 +3,17 @@
 Account::Account()
 	: id_(NULL - 1), name_(_NULL), surname_(_NULL),
 	birthday_(_NULL), hometown_(_NULL), current_city_(_NULL),
-	phone_number_(_NULL), age_(NULL), balance_(NULL)
+	phone_number_(_NULL), age_(NULL), balance_(NULL),
+	username_(NULL), password_(NULL)
 {
-	++exitst_users_;
-	SetID(exitst_users_);
+	SetID(getUsersN() + 5);
 }
 
 Account::~Account()
 {
-	--exitst_users_;
 }
 
-void Account::SetNewFileName()
+void Account::setNewFileName()
 {
 	cout << "Setting new file name is running . . .\n"
 		<< "Enter a file name: ";
@@ -234,6 +233,24 @@ void Account::SetBalance(long double balance)
 		balance_ = balance;
 }
 
+bool Account::setUsername(char* u)
+{
+	if (!u || strlen(u) < 4)
+		return false;
+
+	username_ = u;
+	return true;
+}
+
+bool Account::setPassword(char* p)
+{
+	if (!p || strlen(p) < 8)
+		return false;
+
+	password_ = p;
+	return true;
+}
+
 unsigned long long int Account::GetID() const { return id_; }
 
 const string& Account::GetName() const { return name_; }
@@ -252,9 +269,7 @@ const string& Account::GetPhoneNumber() const { return phone_number_; }
 
 long double Account::GetBalance() const { return balance_; }
 
-unsigned short Account::GetExistUsersNumber() const { return exitst_users_; }
-
-void Account::CreateNewAccount()
+bool Account::createNewAccount()
 {
 	cout << "Starting processing the new account user.\n";
 	
@@ -266,53 +281,64 @@ void Account::CreateNewAccount()
 	string current_city;
 	string phone_number;
 	long double balance;
+	char* usernameAttempt = new char[64];
+	char* passwordAttempt = new char[64];
 
 	SetID(rand() % 1024);
 	cout << "Your ID is: " << GetID() << '\n';
 	
-	cout << "Enter your first name: ";
+	cout << "First name: ";
 	cin >> name;
 	SetName(name);
 	
-	cout << "Enter your second name: ";
+	cout << "Second name: ";
 	cin >> surname;
 	SetSurname(surname);
 	
-	cout << "Enter your age: ";
+	cout << "Age: ";
 	cin >> age;
 	SetAge(age);
 	
-	cout << "Enter your birthday in format  mm.dd.yyyy : ";
+	cout << "Birthday, format mm.dd.yyyy: ";
 	cin >> birthday;
 	SetBirthday(birthday);
 	
-	cout << "Enter your hometown: ";
+	cout << "Hometown: ";
 	cin >> hometown;
 	SetHometown(hometown);
 	
-	cout << "Enter your current city: ";
+	cout << "Current city: ";
 	cin >> current_city;
 	SetCurrentCity(current_city);
 	
-	cout << "Enter your phone number in format +380XXXXXXXXX: ";
+	cout << "Phone number, format +380XXXXXXXXX: ";
 	cin >> phone_number;
 	SetPhoneNumber(phone_number);
 
-	cout << "Enter your current balance: ";
+	cout << "Current balance: ";
 	cin >> balance;
 	SetBalance(balance);
 
+	cout << "\nUsername: ";
+	cin >> usernameAttempt;
+	cout << "\nPassword: ";
+	cin >> passwordAttempt;
+	if (!setUsername(usernameAttempt) 
+		|| !setPassword(passwordAttempt))
+		return false;
+
 	cout << "Processing the new account user is finished successfully.\n";
+	return true;
 }
 
-void Account::Load()
+bool Account::load()
 {
 	ifstream is(reserve_file_name_, ios::in | ios::binary);
 	if (!is.is_open() || is.fail())
 	{
 		cerr << "Error: loading with file "
 			<< reserve_file_name_ << " has been failed\n";
-		return;
+		return false;
 	}
 
 	cout << "Loading is running . . .\n";
@@ -326,11 +352,14 @@ void Account::Load()
 	string current_city;
 	string phone_number;
 	long double balance;
+	char *username = new char[64], 
+		*password = new char[64];
 
 	is >> id >> name
 		>> surname >> age >> birthday
 		>> hometown >> current_city
-		>> phone_number >> balance;
+		>> phone_number >> balance 
+		>> username >> password;
 
 	SetID(id);
 	SetName(name);
@@ -341,17 +370,39 @@ void Account::Load()
 	SetCurrentCity(current_city);
 	SetPhoneNumber(phone_number);
 	SetBalance(balance);
+	setUsername(username);
+	setPassword(password);
 
 	cout << "Loading has been finished successfully.\n";
+	return 1;
 }
 
-void Account::LoadWith()
+bool Account::loadWith()
 {
-	SetNewFileName();
-	Load();
+	setNewFileName();
+	return load();
 }
 
-void Account::Save()
+bool Account::manualLoad()
+{
+	cout << "\nUsername: ";
+	char *usernameAttempt = 0;
+	cin >> usernameAttempt;
+	if (strcmp(usernameAttempt, username_) == 0)
+	{
+		cout << "\nPassword: ";
+		char *passwordAttempt = 0;
+		cin >> passwordAttempt;
+		if (strcmp(passwordAttempt, password_) == 0)
+		{
+			cout << "\nLogin successful.";
+			return true;
+		}
+	}
+	return false;
+}
+
+void Account::save()
 {
 	cout << "Saving is running . . .\n";
 
@@ -365,62 +416,72 @@ void Account::Save()
 	os << id_ << ' ' << name_ << ' ' 
 		<< surname_ << ' ' << birthday_ << ' ' << hometown_ 
 		<< ' ' <<current_city_ << ' ' << phone_number_ << ' '
-		<< age_ << ' ' << setprecision(4) << balance_;
+		<< age_ << ' ' << setprecision(4) << balance_ 
+		<< username_ << ' ' << password_;
 	
 	cout << "Saving has been finished successfully.\n";
 }
 
-void Account::SaveAs()
+void Account::saveAs()
 {
-	SetNewFileName();
-	Save();
+	setNewFileName();
+	save();
 }
 
-void Account::StartService()
+bool Account::logIn()
 {
-	char go = 'y';
-	while (go == 'y' || go == 'Y')
+	bool i = 0;
+	while (i == 0)
 	{
 		system("cls");
-		cout << menu << id_ << "\n\n";
-
-		// new cin input
-		cin.sync(); 
-		cin.clear();
-		cout << "operation$ ";
+		cout << header << menu << id_ 
+			<< "\n\nChoice: ";
 		char operation;
 		cin >> operation;
 
 		switch (toupper(operation))
 		{
 		case 'C':
-			CreateNewAccount();
+			i = createNewAccount();
 			break;
 		case 'L':
-			Load();
+			i = load();
 			break;
 		case 'R':
-			LoadWith();
-			break;
-		case 'S':
-			Save();
-			break;
-		case 'W':
-			SaveAs();
-			break;
-		case 'D':	
-			cout << *this;
+			i = loadWith();
 			break;
 		default:
-			cout << "Nothing changed.\n";
+			i = manualLoad();
 			break;
 		}
-
-		cout << "\nTo continue do another operation enter [y/n]. ";
-		cin.sync(); 
-		cin.clear(); 
-		cin >> go;
 	}
+	
+	system("cls");
+	cout << "Login successful";
+	
+	return true;
+}
+
+void Account::makeTransaction(Account& receiver, double amount)
+{
+	cout << "\nMaking transaction ...";
+	if (balance_ - amount < 0)
+		cout << "\nFailure: Not enough money."
+			<< "\nOperation: transfering " << amount << "$"
+			<< "\nBalance: " << balance_;
+	
+	Transaction t(*this, receiver, amount),
+		t2(receiver, *this, -amount);
+	SetBalance(balance_ - amount);
+	receiver.balance_ += amount;
+	history.push(t);
+	receiver.history.push(t2);
+}
+
+void Account::toUp()
+{
+	// source;
+	double amount;
 }
 
 ostream& operator<<(ostream& os, Account& acc)
@@ -448,7 +509,5 @@ ostream& operator<<(ostream& os, Account& acc)
 	
 	return os;
 }
-
-unsigned short Account::exitst_users_ = 0;
 
 string Account::reserve_file_name_ = "account.txt";

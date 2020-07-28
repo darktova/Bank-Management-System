@@ -1,15 +1,16 @@
 #pragma once
-#include <string>
+#include "Account.h"
 
 class Transaction
 {
 private:
 	std::string msg;
-	Transaction* next;
 
 public:
 	Transaction();
-	Transaction(double);
-
+	
+	// Sender, reciever, amount
+	Transaction(Account&, Account&, double);
+	const string& getMsg() const;
 };
 

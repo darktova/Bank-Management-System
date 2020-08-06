@@ -1,6 +1,7 @@
 #include "Bank.h"
 
 Bank::Bank()
+	: admin(new Account())
 {
 	upload();
 }
@@ -8,11 +9,6 @@ Bank::Bank()
 Bank::~Bank()
 {
 	save();
-}
-
-int Bank::getUsersN()
-{
-	return users.size();
 }
 
 void Bank::save(Account* u)
@@ -97,6 +93,11 @@ bool Bank::upload()
 	return true;
 }
 
+int Bank::getUsersN()
+{
+	return users.size();
+}
+
 void Bank::services(Account& u)
 {
 	while (true)
@@ -105,10 +106,9 @@ void Bank::services(Account& u)
 		cout << header << operations 
 			<< "\nBalance: " << u.GetBalance() << "$"
 			<< "\nChoice: ";
-		
-		char s = ' ';
-		int id = 0;
-		double amount = 0.0;
+		char s;
+		int id;
+		double amount;
 		Account* receiver = new Account();
 
 		cin >> s;
@@ -118,6 +118,7 @@ void Bank::services(Account& u)
 		case 'T':
 			// Transaction info.
 			cout << "\nReciever (ID): ";
+			
 			cin >> id;
 			cout << "\nAmount ($): ";
 			cin >> amount;

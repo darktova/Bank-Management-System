@@ -1,25 +1,18 @@
 #pragma once
-#ifndef _ACCOUNT_
-#define _ACCOUNT_
 #define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
 #include <sstream>
 #include <fstream>
-#include <string>
 #include <iomanip>
-#include <cmath>
 #include <list>
 #include <stack>
 #include "Data.h"
-#include "Transaction.h"
-#include "Bank.h"
 using namespace std;
 
 class Account
 {
 private:
-	std::stack<Transaction> history;
-
+	
 	// name where to write, read into, from file 
 	static string reserve_file_name_;
 	unsigned long long int id_;
@@ -33,21 +26,40 @@ private:
 	long double balance_;
 	char *username_, *password_;
 	
-	// set new value to account id
-	void SetID(unsigned long long int);
-	
 	// set the file name by user input (account.txt, so on).
 	void setNewFileName();
 
 	// checking data correction 
 	bool CheckFullName(const string&);
-	bool CheckBirthday(const string&);
 	bool CheckAge(unsigned short);
+	bool CheckBirthday(const string&);
 	bool CheckTown(const string&);
 	bool CheckPhoneNumber(const string&);
 	bool CheckBalance(long double);
 
+	// create a new account by user input 
+	bool createNewAccount();
+
+	// loading from account.txt
+	bool load();
+
+	// Manual log in: login + password
+	bool manualLoad();
+
+	// saving into "account.txt".
+	void save();
+
+	// saving into the new file (from user input).
+	void saveAs();
+
+public:
+
+	// default constructor
+	Account();
+
 	// setters for private data members
+	// set new value to account id
+	void SetID(unsigned long long int);
 	void SetName(const string&);
 	void SetSurname(const string&);
 	void SetAge(unsigned short);
@@ -59,32 +71,6 @@ private:
 	bool setUsername(char*);
 	bool setPassword(char*);
 
-	// create a new account by user input 
-	bool createNewAccount();
-
-	// read an account from default file "account.txt".
-	bool load();
-
-	// read an account from new file (from user input).
-	bool loadWith();
-
-	// Manual log in: login + password
-	bool manualLoad();
-
-	// writes a private data to the default file "account.txt".
-	void save();
-
-	// writes a private data to the new file (from user input).
-	void saveAs();
-
-
-	// default destructor
-	~Account();
-public:
-	
-	// default constructor
-	Account();
-
 	// getters for private data members 
 	unsigned long long int GetID() const;
 	const string& GetName() const;
@@ -95,6 +81,11 @@ public:
 	const string& GetCurrentCity() const;
 	const string& GetPhoneNumber() const;
 	long double GetBalance() const;
+	const string& GetUsername() const;
+	const string& GetPassword() const;
+
+	// read an account from new file (from user input).
+	bool loadWith();
 
 	// Sign in/Register account.
 	bool logIn();
@@ -107,4 +98,3 @@ public:
 
 // output the account private data members
 ostream& operator<<(ostream&, Account&);
-#endif //	_ACCOUNT_

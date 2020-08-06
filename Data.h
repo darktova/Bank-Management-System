@@ -1,10 +1,14 @@
 #pragma once
+#include <iostream>
+#include <string>
+#include "account.h"
+using namespace std;
 
 // maximum number of accounts in 1-one session
 static const unsigned short MAX_PEOPLE = 1024;
 
 // default value for private data members
-static const std::string _NULL = "null";
+static const string _NULL = "null";
 
 // UI
 static const char* header =
@@ -15,11 +19,13 @@ static const char* menu =
 	"\n\n\'C\' = Create new account"
 	"\n\n\'L\' = Sign in via account.txt"
 	"\n\n\'R\' = Sign in via custom file"
-	"\n\nEnter = Manual input"
-	"\n\n\nCURRENT USER: "
+	"\n\n\'M\' = Manual input"
+	"\n\n\'E\' = Safe exit"
 	"\t";
 
-static const char* services =
+static const char* operations =
 	"\n\n\tServices List"
 	"\n\n\'T\' = Transfer"
-	"\n\n\'U\' = Top-up";
+	"\n\n\'U\' = Top-up"
+	"\n\n\'E\' = Safe exit"
+	"\t";

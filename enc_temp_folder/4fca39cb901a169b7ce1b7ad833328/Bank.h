@@ -5,10 +5,11 @@ using namespace std;
 class Bank
 {
 private:
+	Account* admin;
 	list<Account*> users;
-	int getUsersN();
 
 	void services(Account&);
+	int getUsersN();
 	void save(Account*);
 	void save();
 	bool upload();

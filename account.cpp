@@ -1,17 +1,13 @@
 #include "Account.h"
+#include "Bank.h"
+using namespace std;
 
 Account::Account()
 	: id_(NULL - 1), name_(_NULL), surname_(_NULL),
 	birthday_(_NULL), hometown_(_NULL), current_city_(_NULL),
 	phone_number_(_NULL), age_(NULL), balance_(NULL),
-	username_(NULL), password_(NULL)
-{
-	SetID(getUsersN() + 5);
-}
-
-Account::~Account()
-{
-}
+	username_(NULL), password_(NULL) 
+{}
 
 void Account::setNewFileName()
 {
@@ -90,6 +86,7 @@ bool Account::CheckBirthday(const string& s)
 		!(isdigit(s[0]) && isdigit(s[1]) && s[2] == '.' &&
 			isdigit(s[3]) && isdigit(s[4]) && s[5] == '.' &&
 			isdigit(s[6]) && isdigit(s[7]) && isdigit(s[8]) && isdigit(s[9]));
+	
 	if (incorrect_format)
 	{
 		cerr << "Error: Incorrect birthday format or unavailable chars.\n";
@@ -110,22 +107,15 @@ bool Account::CheckBirthday(const string& s)
 	time(&sec); // Get the present time.
 	dur = localtime(&sec);
 	int curr_year = dur->tm_year + 1900,
-		curr_month = dur->tm_mon + 1;
+		curr_month = dur->tm_mon + 1,
+		curr_day = dur->tm_mday;
 
-	// checking for incorrect date num.
-	bool incorrect_date =
-		(!m || m > 12 || ((curr_month < m) && (age_ == curr_year - y)) ||
-		((curr_month > m) && (age_ < curr_year - y)) ||
-			!d || d > 31 ||
-			y < 1970 || y > 2170);
-	if (incorrect_date)
-	{
-		cerr << "Error: Incorrect numbers of date.\n";
-		return false;
-	}
+	bool correct_date = (y < curr_year) && (m && m < 12) && (d && d < 31)
+		&& (((curr_year - y == age_ - 1) && (m < curr_month))
+			|| ((curr_year - y == age_) && (m > curr_month))
+			|| ((curr_year - y == age_) && (m == curr_month) && (d >= curr_day)));
 
-	// success: correct birthday;
-	return true;
+	return (correct_date);
 }
 
 bool Account::CheckTown(const string& s)
@@ -197,16 +187,16 @@ void Account::SetSurname(const string& s)
 		surname_ = s;
 }
 
+void Account::SetAge(unsigned short age)
+{
+	if (CheckAge(age))
+		age_ = age;
+}
+
 void Account::SetBirthday(const string& s)
 {
 	if (CheckBirthday(s))
 		birthday_ = s;
-}
-
-void Account::SetAge(unsigned short age)
-{
-	if (CheckAge(age) && (birthday_ != _NULL))
-		age_ = age;
 }
 
 void Account::SetHometown(const string& s)
@@ -269,23 +259,34 @@ const string& Account::GetPhoneNumber() const { return phone_number_; }
 
 long double Account::GetBalance() const { return balance_; }
 
+const string& Account::GetUsername() const
+{
+	return username_;
+}
+
+const string& Account::GetPassword() const
+{
+	return password_;
+}
+
 bool Account::createNewAccount()
 {
 	cout << "Starting processing the new account user.\n";
 	
-	string name;
-	string surname;
-	unsigned short age;
-	string birthday;
-	string hometown;
-	string current_city;
-	string phone_number;
-	long double balance;
+	string name = "";
+	string surname = "";
+	unsigned short age = 0;
+	string birthday = "";
+	string hometown = "";
+	string current_city = "";
+	string phone_number = "";
+	long double balance = 0.0;
 	char* usernameAttempt = new char[64];
 	char* passwordAttempt = new char[64];
 
+	time(0);
 	SetID(rand() % 1024);
-	cout << "Your ID is: " << GetID() << '\n';
+	cout << "Your ID is: " << id_ << '\n';
 	
 	cout << "First name: ";
 	cin >> name;
@@ -385,6 +386,16 @@ bool Account::loadWith()
 
 bool Account::manualLoad()
 {
+	time(0);
+	SetID(rand() % 1024);
+
+	if (!username_)
+	{
+		std::cout << "You are not registered yet!\n";
+		system("pause");
+		return false;
+	}
+
 	cout << "\nUsername: ";
 	char *usernameAttempt = 0;
 	cin >> usernameAttempt;
@@ -413,11 +424,12 @@ void Account::save()
 		return;
 	}
 
-	os << id_ << ' ' << name_ << ' ' 
-		<< surname_ << ' ' << birthday_ << ' ' << hometown_ 
-		<< ' ' <<current_city_ << ' ' << phone_number_ << ' '
-		<< age_ << ' ' << setprecision(4) << balance_ 
-		<< username_ << ' ' << password_;
+	os << id_ << ' ' << name_ 
+		<< ' ' << surname_ << ' ' << age_ 
+		<< ' ' << birthday_ << ' ' << hometown_
+		<< ' ' <<current_city_ << ' ' << phone_number_
+		<< ' ' << setprecision(4) << balance_ 
+		<< ' ' << username_ << ' ' << password_;
 	
 	cout << "Saving has been finished successfully.\n";
 }
@@ -434,7 +446,7 @@ bool Account::logIn()
 	while (i == 0)
 	{
 		system("cls");
-		cout << header << menu << id_ 
+		cout << header << menu 
 			<< "\n\nChoice: ";
 		char operation;
 		cin >> operation;
@@ -450,9 +462,15 @@ bool Account::logIn()
 		case 'R':
 			i = loadWith();
 			break;
-		default:
+		case 'M':
 			i = manualLoad();
 			break;
+		case 'E':
+			system("cls");
+			std::cout << header
+				<< "\n\nLogging out from the Bank.";
+			system("pause");
+			exit(0);
 		}
 	}
 	
@@ -465,23 +483,29 @@ bool Account::logIn()
 void Account::makeTransaction(Account& receiver, double amount)
 {
 	cout << "\nMaking transaction ...";
+
+	// Cheking
 	if (balance_ - amount < 0)
 		cout << "\nFailure: Not enough money."
 			<< "\nOperation: transfering " << amount << "$"
 			<< "\nBalance: " << balance_;
-	
-	Transaction t(*this, receiver, amount),
-		t2(receiver, *this, -amount);
+
+	// Transaction history
+	std::ostringstream msg;
+	msg << "\nOperation: transfering money;\nSender: " << id_
+		<< ";\nReceiver: " << receiver.GetID() << ";\nAmount: " << amount
+		<< ";\nBalance: " << balance_;
+	// history.push_back(msg.str());
+
+	// Transfering money
 	SetBalance(balance_ - amount);
 	receiver.balance_ += amount;
-	history.push(t);
-	receiver.history.push(t2);
 }
 
 void Account::toUp()
 {
 	// source;
-	double amount;
+	double amount = 0.0;
 }
 
 ostream& operator<<(ostream& os, Account& acc)

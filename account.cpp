@@ -6,7 +6,7 @@ Account::Account()
 	: id_(NULL - 1), name_(_NULL), surname_(_NULL),
 	birthday_(_NULL), hometown_(_NULL), current_city_(_NULL),
 	phone_number_(_NULL), age_(NULL), balance_(NULL),
-	username_(NULL), password_(NULL) 
+	username_(_NULL), password_(_NULL)
 {}
 
 void Account::setNewFileName()
@@ -110,10 +110,10 @@ bool Account::CheckBirthday(const string& s)
 		curr_month = dur->tm_mon + 1,
 		curr_day = dur->tm_mday;
 
-	bool correct_date = (y < curr_year) && (m && m < 12) && (d && d < 31)
+	bool correct_date = ((y < curr_year) && (m && m < 12) && (d && d < 31)
 		&& (((curr_year - y == age_ - 1) && (m < curr_month))
 			|| ((curr_year - y == age_) && (m > curr_month))
-			|| ((curr_year - y == age_) && (m == curr_month) && (d >= curr_day)));
+			|| ((curr_year - y == age_) && (m == curr_month) && (d >= curr_day))));
 
 	return (correct_date);
 }
@@ -223,18 +223,18 @@ void Account::SetBalance(long double balance)
 		balance_ = balance;
 }
 
-bool Account::setUsername(char* u)
+bool Account::setUsername(const string& u)
 {
-	if (!u || strlen(u) < 4)
+	if (u.size() || u.size() > 10)
 		return false;
 
 	username_ = u;
 	return true;
 }
 
-bool Account::setPassword(char* p)
+bool Account::setPassword(const string& p)
 {
-	if (!p || strlen(p) < 8)
+	if (!p.size() || p.size() > 8)
 		return false;
 
 	password_ = p;
@@ -259,15 +259,9 @@ const string& Account::GetPhoneNumber() const { return phone_number_; }
 
 long double Account::GetBalance() const { return balance_; }
 
-const string& Account::GetUsername() const
-{
-	return username_;
-}
+const string& Account::GetUsername() const { return username_; }
 
-const string& Account::GetPassword() const
-{
-	return password_;
-}
+const string& Account::GetPassword() const { return password_; }
 
 bool Account::createNewAccount()
 {
@@ -281,8 +275,8 @@ bool Account::createNewAccount()
 	string current_city = "";
 	string phone_number = "";
 	long double balance = 0.0;
-	char* usernameAttempt = new char[64];
-	char* passwordAttempt = new char[64];
+	string usernameAttempt = "";
+	string passwordAttempt = "";
 
 	time(0);
 	SetID(rand() % 1024);
@@ -353,8 +347,8 @@ bool Account::load()
 	string current_city;
 	string phone_number;
 	long double balance;
-	char *username = new char[64], 
-		*password = new char[64];
+	string username;
+	string password;
 
 	is >> id >> name
 		>> surname >> age >> birthday
@@ -389,7 +383,7 @@ bool Account::manualLoad()
 	time(0);
 	SetID(rand() % 1024);
 
-	if (!username_)
+	if (username_.size())
 	{
 		std::cout << "You are not registered yet!\n";
 		system("pause");
@@ -397,47 +391,21 @@ bool Account::manualLoad()
 	}
 
 	cout << "\nUsername: ";
-	char *usernameAttempt = 0;
+	string usernameAttempt = 0;
 	cin >> usernameAttempt;
-	if (strcmp(usernameAttempt, username_) == 0)
+	if (usernameAttempt.compare(username_) == 0)
 	{
 		cout << "\nPassword: ";
-		char *passwordAttempt = 0;
+		string passwordAttempt = 0;
 		cin >> passwordAttempt;
-		if (strcmp(passwordAttempt, password_) == 0)
+		
+		if (passwordAttempt.compare(password_) == 0)
 		{
 			cout << "\nLogin successful.";
 			return true;
 		}
 	}
 	return false;
-}
-
-void Account::save()
-{
-	cout << "Saving is running . . .\n";
-
-	ofstream os(reserve_file_name_, ios::out | ios::binary);
-	if (!os.is_open() || os.fail())
-	{
-		cerr << "Error: Read file " << reserve_file_name_ << '\n';
-		return;
-	}
-
-	os << id_ << ' ' << name_ 
-		<< ' ' << surname_ << ' ' << age_ 
-		<< ' ' << birthday_ << ' ' << hometown_
-		<< ' ' <<current_city_ << ' ' << phone_number_
-		<< ' ' << setprecision(4) << balance_ 
-		<< ' ' << username_ << ' ' << password_;
-	
-	cout << "Saving has been finished successfully.\n";
-}
-
-void Account::saveAs()
-{
-	setNewFileName();
-	save();
 }
 
 bool Account::logIn()

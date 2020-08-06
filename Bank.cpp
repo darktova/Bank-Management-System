@@ -19,19 +19,27 @@ void Bank::save(Account* u)
 {
 	cout << "Saving is running . . .\n";
 
-	ofstream os("users.txt", ios::out);
+	fstream os("users.txt", ios::out);
 	if (!os.is_open() || os.fail())
 	{
 		cerr << "Error: Read file " << "users.txt" << '\n';
 		return;
 	}
 
-	os << u->GetID() << ' ' << u->GetName() << ' ' << u->GetSurname() 
-		<< ' ' << u->GetAge() << ' ' << u->GetBirthday()
-		<< ' ' << u->GetHometown() << ' ' << u->GetCurrentCity() << ' '
-		<< ' ' << u->GetPhoneNumber() << ' '
-		<< ' ' << setprecision(4) << u->GetBalance()
-		<< ' ' << u->GetUsername() << ' ' << u->GetPassword();
+	os << u->GetID() << ' ';
+	os << u->GetName() << ' ';
+	os << u->GetSurname() << ' ';
+	os << u->GetAge() << ' ';
+	os << u->GetBirthday() << ' ';
+	os << u->GetHometown() << ' '; 
+	os << u->GetCurrentCity() << ' ';
+	os << u->GetPhoneNumber() << ' ';
+	os << setprecision(4) << u->GetBalance() << ' ';
+	os << u->GetUsername();
+	//os.write(u->GetUsername(), sizeof(u->GetUsername()));
+	os << ' ';
+	//os.write(u->GetPassword(), sizeof(u->GetPassword()));
+	os << u->GetPassword();
 
 	cout << "Saving has been finished successfully.\n";
 }
@@ -44,8 +52,7 @@ void Bank::save()
 
 bool Bank::upload()
 {
-	ifstream is("users.txt", ios::in);
-	is.seekg(ios::beg);
+	ifstream is("users.txt", ios::in | ios::binary);
 	if (!is.is_open() || is.fail() || !is || is.eof())
 	{
 		cerr << "Error: loading with file "
@@ -64,8 +71,8 @@ bool Bank::upload()
 	string current_city = _NULL;
 	string phone_number = _NULL;
 	long double balance = 0.0;
-	char* username = new char[64]{ ' ' },
-		* password = new char[64]{ ' ' };
+	string username = "";
+	string password = "";
 
 	while (!is.eof())
 	{

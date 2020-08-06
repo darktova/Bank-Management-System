@@ -24,7 +24,7 @@ private:
 	string current_city_;
 	string phone_number_;
 	long double balance_;
-	char *username_, *password_;
+	string username_, password_;
 	
 	// set the file name by user input (account.txt, so on).
 	void setNewFileName();
@@ -46,12 +46,6 @@ private:
 	// Manual log in: login + password
 	bool manualLoad();
 
-	// saving into "account.txt".
-	void save();
-
-	// saving into the new file (from user input).
-	void saveAs();
-
 public:
 
 	// default constructor
@@ -68,8 +62,8 @@ public:
 	void SetCurrentCity(const string&);
 	void SetPhoneNumber(const string&);
 	void SetBalance(long double);
-	bool setUsername(char*);
-	bool setPassword(char*);
+	bool setUsername(const string&);
+	bool setPassword(const string&);
 
 	// getters for private data members 
 	unsigned long long int GetID() const;

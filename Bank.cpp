@@ -26,12 +26,11 @@ void Bank::save(Account* u)
 		return;
 	}
 
-	os << u->GetID() << ' ' << u->GetName() << ' '
-		<< u->GetSurname() << ' ' << u->GetBirthday();
-	os << ' ' << u->GetAge()
-		<< ' ' << u->GetHometown() << ' ' << u->GetCurrentCity() << ' ';
-	os << u->GetPhoneNumber() << ' ';
-	os << ' ' << setprecision(4) << u->GetBalance()
+	os << u->GetID() << ' ' << u->GetName() << ' ' << u->GetSurname() 
+		<< ' ' << u->GetAge() << ' ' << u->GetBirthday()
+		<< ' ' << u->GetHometown() << ' ' << u->GetCurrentCity() << ' '
+		<< ' ' << u->GetPhoneNumber() << ' '
+		<< ' ' << setprecision(4) << u->GetBalance()
 		<< ' ' << u->GetUsername() << ' ' << u->GetPassword();
 
 	cout << "Saving has been finished successfully.\n";
@@ -40,12 +39,13 @@ void Bank::save(Account* u)
 void Bank::save()
 {
 	for (; !users.empty(); users.pop_front())
-		save(users.front());
+		save(&(users.front()));
 }
 
 bool Bank::upload()
 {
 	ifstream is("users.txt", ios::in);
+	is.seekg(ios::beg);
 	if (!is.is_open() || is.fail() || !is || is.eof())
 	{
 		cerr << "Error: loading with file "
@@ -90,11 +90,31 @@ bool Bank::upload()
 		u->setPassword(password);
 
 		addUser(u);
-		delete u;
 	}
 
 	cout << "Loading has been finished successfully.\n";
 	return true;
+}
+
+void Bank::setTransactionData(Account* r, double& amount)
+{
+	r = nullptr;
+
+	// Transaction info.
+	int id = 0;
+	cout << "\nReciever (ID): ";
+	cin >> id;
+	r = findUser(id);
+
+	if (r == nullptr || !r->GetID())
+	{
+		cout << "There is no user with ID: " << id;
+		system("pause");
+		return;
+	}
+
+	cout << "\nAmount ($): ";
+	cin >> amount;
 }
 
 void Bank::services(Account& u)
@@ -102,38 +122,20 @@ void Bank::services(Account& u)
 	while (true)
 	{
 		system("cls");
+		char s = ' ';
 		cout << header << operations 
 			<< "\nBalance: " << u.GetBalance() << "$"
 			<< "\nChoice: ";
-		
-		char s = ' ';
-		int id = 0;
+		cin >> s;
+
 		double amount = 0.0;
 		Account* receiver = new Account();
-
-		cin >> s;
 
 		switch (toupper(s))
 		{
 		case 'T':
-			// Transaction info.
-			cout << "\nReciever (ID): ";
-			cin >> id;
-			cout << "\nAmount ($): ";
-			cin >> amount;
-
-			// Find receiver
-			for (auto i = *(users.begin()); i != *(users.end()); ++i)
-				if (i->GetID() == id)
-					receiver = i;
-		
-			if (!receiver)
-			{
-				cout << "There is no user with ID: " << id;
-				system("pause");
-				break;
-			}
-			u.makeTransaction(*receiver, amount);
+			setTransactionData(receiver, amount);
+			u.makeTransaction(receiver, amount);
 			break;
 		case 'U':
 			u.toUp();
@@ -152,13 +154,7 @@ void Bank::services(Account& u)
 void Bank::launch()
 {
 	Account* user = new Account();
-	
-	if (user->logIn() == 2)
-	{
-		std::cout << "\n\nLogging out from the Bank.";
-		exit(0);
-	}
-
+	user->logIn();
 	addUser(user);
 	services(*user);
 }
@@ -170,5 +166,23 @@ void Bank::addUser(Account* u)
 		cout << "Empty user!\n";
 		return;
 	}
-	users.push_back(u);
+	users.push_back(*u);
+}
+
+/*void Bank::removeUser(long long int id)
+{
+	users.remove(*findUser(id));
+}*/
+
+Account* Bank::findUser(long long int id)
+{
+	Account* r = new Account();
+	for (auto i = users.begin(); i != users.end(); ++i)
+		if (i->GetID() == id)
+		{
+			*r = *i;
+			break;
+		}
+
+	return r;
 }

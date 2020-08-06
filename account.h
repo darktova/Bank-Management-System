@@ -91,7 +91,7 @@ public:
 	bool logIn();
 
 	// id, amount
-	void makeTransaction(Account&, double);
+	void makeTransaction(Account*, double);
 	
 	void toUp(); 
 };

@@ -480,7 +480,7 @@ bool Account::logIn()
 	return true;
 }
 
-void Account::makeTransaction(Account& receiver, double amount)
+void Account::makeTransaction(Account* receiver, double amount)
 {
 	cout << "\nMaking transaction ...";
 
@@ -493,13 +493,13 @@ void Account::makeTransaction(Account& receiver, double amount)
 	// Transaction history
 	std::ostringstream msg;
 	msg << "\nOperation: transfering money;\nSender: " << id_
-		<< ";\nReceiver: " << receiver.GetID() << ";\nAmount: " << amount
+		<< ";\nReceiver: " << receiver->GetID() << ";\nAmount: " << amount
 		<< ";\nBalance: " << balance_;
 	// history.push_back(msg.str());
 
 	// Transfering money
 	SetBalance(balance_ - amount);
-	receiver.balance_ += amount;
+	receiver->balance_ += amount;
 }
 
 void Account::toUp()

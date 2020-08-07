@@ -26,20 +26,16 @@ void Bank::save(Account* u)
 		return;
 	}
 
-	os << u->GetID() << ' ';
-	os << u->GetName() << ' ';
-	os << u->GetSurname() << ' ';
-	os << u->GetAge() << ' ';
-	os << u->GetBirthday() << ' ';
-	os << u->GetHometown() << ' '; 
-	os << u->GetCurrentCity() << ' ';
-	os << u->GetPhoneNumber() << ' ';
-	os << setprecision(4) << u->GetBalance() << ' ';
-	os << u->GetUsername();
-	//os.write(u->GetUsername(), sizeof(u->GetUsername()));
-	os << ' ';
-	//os.write(u->GetPassword(), sizeof(u->GetPassword()));
-	os << u->GetPassword();
+	os << u->GetID() << ' '
+	<< u->GetName() << ' '
+	<< u->GetSurname() << ' '
+	<< u->GetAge() << ' '
+	<< u->GetBirthday() << ' '
+	<< u->GetHometown() << ' ' 
+	<< u->GetCurrentCity() << ' '
+	<< u->GetPhoneNumber() << ' '
+	<< fixed << setprecision(4) << u->GetBalance() << ' '
+	<< u->GetUsername() << ' ' << u->GetPassword();
 
 	cout << "Saving has been finished successfully.\n";
 }
@@ -96,6 +92,11 @@ bool Bank::upload()
 		u->setUsername(username);
 		u->setPassword(password);
 
+		if (id == 0)
+		{
+			cout << "\nError: Empty user";
+			return false;
+		}
 		addUser(u);
 	}
 
@@ -105,15 +106,13 @@ bool Bank::upload()
 
 void Bank::setTransactionData(Account* r, double& amount)
 {
-	r = nullptr;
-
 	// Transaction info.
 	int id = 0;
 	cout << "\nReciever (ID): ";
 	cin >> id;
 	r = findUser(id);
 
-	if (r == nullptr || !r->GetID())
+	if (!r || r->GetID() == NULL)
 	{
 		cout << "There is no user with ID: " << id;
 		system("pause");
@@ -184,6 +183,7 @@ void Bank::addUser(Account* u)
 Account* Bank::findUser(long long int id)
 {
 	Account* r = new Account();
+	r->SetID(NULL);
 	for (auto i = users.begin(); i != users.end(); ++i)
 		if (i->GetID() == id)
 		{

@@ -111,8 +111,8 @@ bool Account::CheckBirthday(const string& s)
 		curr_day = dur->tm_mday;
 
 	bool correct_date = ((y < curr_year) && (m && m < 12) && (d && d < 31)
-		&& (((curr_year - y == age_ - 1) && (m < curr_month))
-			|| ((curr_year - y == age_) && (m > curr_month))
+		&& (((curr_year - y == age_) && (m < curr_month))
+			|| ((curr_year - y == age_ + 1) && (m > curr_month))
 			|| ((curr_year - y == age_) && (m == curr_month) && (d >= curr_day))));
 
 	return (correct_date);
@@ -225,7 +225,7 @@ void Account::SetBalance(long double balance)
 
 bool Account::setUsername(const string& u)
 {
-	if (u.size() || u.size() > 10)
+	if (!u.size() || u.size() > 10)
 		return false;
 
 	username_ = u;
@@ -369,7 +369,7 @@ bool Account::load()
 	setPassword(password);
 
 	cout << "Loading has been finished successfully.\n";
-	return 1;
+	return true;
 }
 
 bool Account::loadWith()
@@ -391,12 +391,12 @@ bool Account::manualLoad()
 	}
 
 	cout << "\nUsername: ";
-	string usernameAttempt = 0;
+	string usernameAttempt = "";
 	cin >> usernameAttempt;
 	if (usernameAttempt.compare(username_) == 0)
 	{
 		cout << "\nPassword: ";
-		string passwordAttempt = 0;
+		string passwordAttempt = "";
 		cin >> passwordAttempt;
 		
 		if (passwordAttempt.compare(password_) == 0)
@@ -441,8 +441,7 @@ bool Account::logIn()
 			exit(0);
 		}
 	}
-	
-	system("cls");
+
 	cout << "Login successful";
 	
 	return true;
@@ -450,6 +449,13 @@ bool Account::logIn()
 
 void Account::makeTransaction(Account* receiver, double amount)
 {
+	if (id_ == receiver->id_)
+	{
+		std::cout << "\nError: Incorrect transaction receiver.";
+		system("pause");
+		return;
+	}
+
 	cout << "\nMaking transaction ...";
 
 	// Cheking

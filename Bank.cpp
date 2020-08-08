@@ -151,18 +151,22 @@ void Bank::services(Account& u)
 			std::cout << header
 				<< "\n\nLogging out from the Bank.";
 			save();
+			upload();
 			system("pause");
-			exit(0);
+			return;
 		}
 	}
 }
 
 void Bank::launch()
 {
-	Account* user = new Account();
-	user->logIn();
-	addUser(user);
-	services(*user);
+	while (true)
+	{
+		Account* user = new Account();
+		user->logIn();
+		addUser(user);
+		services(*user);
+	}
 }
 
 void Bank::addUser(Account* u)

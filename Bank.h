@@ -7,7 +7,7 @@ class Bank
 private:
 	list<Account> users;
 	void addUser(Account*);
-	//void removeUser(long long int);
+	void removeUser(long long int);
 	Account* findUser(long long int);
 	int getUsersN();
 

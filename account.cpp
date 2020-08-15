@@ -372,42 +372,6 @@ bool Account::load()
 	return true;
 }
 
-bool Account::loadWith()
-{
-	setNewFileName();
-	return load();
-}
-
-bool Account::manualLoad()
-{
-	time(0);
-	SetID(rand() % 1024);
-
-	if (username_.size())
-	{
-		std::cout << "You are not registered yet!\n";
-		system("pause");
-		return false;
-	}
-
-	cout << "\nUsername: ";
-	string usernameAttempt = "";
-	cin >> usernameAttempt;
-	if (usernameAttempt.compare(username_) == 0)
-	{
-		cout << "\nPassword: ";
-		string passwordAttempt = "";
-		cin >> passwordAttempt;
-		
-		if (passwordAttempt.compare(password_) == 0)
-		{
-			cout << "\nLogin successful.";
-			return true;
-		}
-	}
-	return false;
-}
-
 bool Account::logIn()
 {
 	bool i = 0;
@@ -426,12 +390,6 @@ bool Account::logIn()
 			break;
 		case 'L':
 			i = load();
-			break;
-		case 'R':
-			i = loadWith();
-			break;
-		case 'M':
-			i = manualLoad();
 			break;
 		case 'E':
 			system("cls");
@@ -478,9 +436,42 @@ void Account::makeTransaction(Account* receiver, double amount)
 
 void Account::toUp()
 {
-	// source;
+	// Checking connection 
+	std::string source_name = "g6i8f5t10_c3a8r3d9.txt";
+	std::ios::openmode source_mode = (ios::in | ios::binary);
+	ifstream source(source_name, source_mode);
+
+	if (!source.good() || !source.is_open())
+	{
+		std::cerr << "\nError: To upping has been failed.";
+		system("pause");
+		return;
+	}
+
+	// Reading data
 	double amount = 0.0;
+	source >> amount;
+	
+	// Checking data
+	if (!checkToUpAmount(amount)) 
+	{
+		system("pause");
+		return;
+	}
+
+	// Actually to up
+	balance_ += amount;
 }
+
+bool Account::checkToUpAmount(double& amount)
+{
+	if (isdigit(amount) && amount && (amount < 10e9))
+	{
+		std::cerr << "\nError: Incorrect sum.";
+		return false;
+	}
+	return true;
+};
 
 ostream& operator<<(ostream& os, Account& acc)
 {

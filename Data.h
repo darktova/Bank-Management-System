@@ -18,8 +18,6 @@ static const char* menu =
 	"\n\n\tChoose the operation:"
 	"\n\n\'C\' = Create new account"
 	"\n\n\'L\' = Sign in via account.txt"
-	"\n\n\'R\' = Sign in via custom file"
-	"\n\n\'M\' = Manual input"
 	"\n\n\'E\' = Safe exit"
 	"\t";
 

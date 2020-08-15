@@ -36,6 +36,7 @@ private:
 	bool CheckTown(const string&);
 	bool CheckPhoneNumber(const string&);
 	bool CheckBalance(long double);
+	bool checkToUpAmount(double&);
 
 	// create a new account by user input 
 	bool createNewAccount();

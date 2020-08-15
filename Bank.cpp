@@ -1,3 +1,4 @@
+#include <map>
 #include "Bank.h"
 
 Bank::Bank()
@@ -19,23 +20,14 @@ void Bank::save(Account* u)
 {
 	cout << "Saving is running . . .\n";
 
-	fstream os("users.txt", ios::out);
+	fstream os("users.txt", ios::out | ios::app | ios::ate);
 	if (!os.is_open() || os.fail())
 	{
 		cerr << "Error: Read file " << "users.txt" << '\n';
 		return;
 	}
 
-	os << u->GetID() << ' '
-	<< u->GetName() << ' '
-	<< u->GetSurname() << ' '
-	<< u->GetAge() << ' '
-	<< u->GetBirthday() << ' '
-	<< u->GetHometown() << ' ' 
-	<< u->GetCurrentCity() << ' '
-	<< u->GetPhoneNumber() << ' '
-	<< fixed << setprecision(4) << u->GetBalance() << ' '
-	<< u->GetUsername() << ' ' << u->GetPassword();
+	os << u;
 
 	cout << "Saving has been finished successfully.\n";
 }
@@ -56,49 +48,18 @@ bool Bank::upload()
 		return false;
 	}
 
-	cout << "Loading is running . . .\n";
-
-	unsigned long long int id = 0;
-	string name = _NULL;
-	string surname = _NULL;
-	unsigned short age = 0;
-	string birthday = _NULL;
-	string hometown = _NULL;
-	string current_city = _NULL;
-	string phone_number = _NULL;
-	long double balance = 0.0;
-	string username = "";
-	string password = "";
+	Account* u = new Account();
+	std::map<long long int, Account*> filtered_users;
 
 	while (!is.eof())
 	{
-		is >> id >> name
-			>> surname >> age >> birthday
-			>> hometown >> current_city
-			>> phone_number >> balance
-			>> username >> password;
-
-		Account* u = new Account();
-
-		u->SetID(id);
-		u->SetName(name);
-		u->SetSurname(surname);
-		u->SetAge(age);
-		u->SetBirthday(birthday);
-		u->SetHometown(hometown);
-		u->SetCurrentCity(current_city);
-		u->SetPhoneNumber(phone_number);
-		u->SetBalance(balance);
-		u->setUsername(username);
-		u->setPassword(password);
-
-		if (id == 0)
-		{
-			cout << "\nError: Empty user";
-			return false;
-		}
-		addUser(u);
+		is >> *u;
+		filtered_users.insert(pair<long long int, Account*>(u->GetID(), u));
 	}
+
+	for (auto i = filtered_users.begin(); i != filtered_users.end(); ++i)
+		addUser(&(*i->second));
+	filtered_users.clear();
 
 	cout << "Loading has been finished successfully.\n";
 	return true;
@@ -145,6 +106,10 @@ void Bank::services(Account& u)
 			break;
 		case 'U':
 			u.toUp();
+			break;
+		case 'D':
+			std::cout << u;
+			system("pause");
 			break;
 		case 'E':
 			system("cls");

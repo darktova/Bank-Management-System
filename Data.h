@@ -27,5 +27,6 @@ static const char* operations =
 	"\n\n\tServices List"
 	"\n\n\'T\' = Transfer"
 	"\n\n\'U\' = Top-up"
+	"\n\n\'D\' = Display"
 	"\n\n\'E\' = Safe exit"
 	"\t";

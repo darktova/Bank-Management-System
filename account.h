@@ -87,8 +87,9 @@ public:
 	// id, amount
 	void makeTransaction(Account*, double);
 	
-	void toUp(); 
+	void toUp();
 };
 
 // output the account private data members
 ostream& operator<<(ostream&, Account&);
+ifstream& operator>>(ifstream&, Account&);

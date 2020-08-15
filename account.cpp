@@ -492,7 +492,8 @@ ostream& operator<<(ostream& os, Account& acc)
 
 	cout << "Outputting is running . . .\n";
 
-	os << "Id:\t" << acc.GetID()
+	os << "\n\t\t\tAccount data" 
+		<< "\nId:\t" << acc.GetID()
 		<< "\nFirst name:\t" << acc.GetName()
 		<< "\nSurname:\t" << acc.GetSurname()
 		<< "\nBirthday:\t" << acc.GetBirthday()
@@ -501,11 +502,61 @@ ostream& operator<<(ostream& os, Account& acc)
 		<< "\nPhone number:\t" << acc.GetPhoneNumber()
 		<< "\nAge:\t" << acc.GetAge()
 		<< "\nBalance:\t" << fixed << setprecision(4) << acc.GetBalance()
+		<< "\nUsername:\t" << acc.GetUsername()
+		<< "\nPassword:\t" << acc.GetPassword()
 		<< '\n';
 
 	cout << "Outputting has been finished successfully.\n";
-	
 	return os;
+}
+ifstream& operator>>(ifstream& is, Account& acc)
+{
+	if (is.fail() || !is || is.eof())
+	{
+		cerr << "Error: loading with file "
+			<< "users.txt" << " has been failed\n";
+		return is;
+	}
+
+	cout << "Loading is running . . .\n";
+
+	unsigned long long int id = 0;
+	string name = _NULL;
+	string surname = _NULL;
+	unsigned short age = 0;
+	string birthday = _NULL;
+	string hometown = _NULL;
+	string current_city = _NULL;
+	string phone_number = _NULL;
+	long double balance = 0.0;
+	string username = "";
+	string password = "";
+
+	is >> id >> name
+		>> surname >> age >> birthday
+		>> hometown >> current_city
+		>> phone_number >> balance
+		>> username >> password;
+
+	if (id == 0)
+	{
+		cout << "\nError: Empty user";
+		return is;
+	}
+
+	acc.SetID(id);
+	acc.SetName(name);
+	acc.SetSurname(surname);
+	acc.SetAge(age);
+	acc.SetBirthday(birthday);
+	acc.SetHometown(hometown);
+	acc.SetCurrentCity(current_city);
+	acc.SetPhoneNumber(phone_number);
+	acc.SetBalance(balance);
+	acc.setUsername(username);
+	acc.setPassword(password);
+
+	return is;
 }
 
 string Account::reserve_file_name_ = "account.txt";

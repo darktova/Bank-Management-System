@@ -1,19 +1,11 @@
 #pragma once
-#define _CRT_SECURE_NO_WARNINGS
-#include <iostream>
-#include <sstream>
-#include <fstream>
-#include <iomanip>
-#include <list>
-#include <stack>
 #include "Data.h"
-using namespace std;
 
 class Account
 {
 private:
 	
-	// name where to write, read into, from file 
+	// name where to write, read into, from file +
 	static string reserve_file_name_;
 	unsigned long long int id_;
 	string name_;
@@ -26,10 +18,10 @@ private:
 	long double balance_;
 	string username_, password_;
 	
-	// set the file name by user input (account.txt, so on).
+	// set the file name by user input (account.txt, so on). +
 	void setNewFileName();
 
-	// checking data correction 
+	// checking data correction +
 	bool CheckFullName(const string&);
 	bool CheckAge(unsigned short);
 	bool CheckBirthday(const string&);
@@ -38,22 +30,16 @@ private:
 	bool CheckBalance(long double);
 	bool checkToUpAmount(double&);
 
-	// create a new account by user input 
-	bool createNewAccount();
-
-	// loading from account.txt
+	// loading from account.txt +
 	bool load();
-
-	// Manual log in: login + password
-	bool manualLoad();
 
 public:
 
-	// default constructor
+	// default constructor +
 	Account();
 
-	// setters for private data members
-	// set new value to account id
+	// setters for private data members +
+	// set new value to account id 
 	void SetID(unsigned long long int);
 	void SetName(const string&);
 	void SetSurname(const string&);
@@ -66,7 +52,7 @@ public:
 	bool setUsername(const string&);
 	bool setPassword(const string&);
 
-	// getters for private data members 
+	// getters for private data members +
 	unsigned long long int GetID() const;
 	const string& GetName() const;
 	const string& GetSurname() const;
@@ -79,11 +65,11 @@ public:
 	const string& GetUsername() const;
 	const string& GetPassword() const;
 
-	// read an account from new file (from user input).
-	bool loadWith();
+	// create a new account by user input 
+	bool createNewAccount();
 
 	// Sign in/Register account.
-	bool logIn();
+	int logIn();
 
 	// id, amount
 	void makeTransaction(Account*, double);
@@ -92,5 +78,6 @@ public:
 };
 
 // output the account private data members
-ostream& operator<<(ostream&, Account&);
+std::ostream& operator<<(std::ostream&, Account&);
+ofstream& operator<<(ofstream&, Account&);
 ifstream& operator>>(ifstream&, Account&);

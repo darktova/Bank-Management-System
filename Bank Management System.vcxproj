@@ -142,13 +142,16 @@
     <ClCompile Include="Account.cpp" />
     <ClCompile Include="Bank.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="Transaction.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Account.h" />
     <ClInclude Include="Bank.h" />
     <ClInclude Include="Data.h" />
-    <ClInclude Include="Transaction.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="account.txt" />
+    <Text Include="g6i8f5t10_c3a8r3d9.txt" />
+    <Text Include="users.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

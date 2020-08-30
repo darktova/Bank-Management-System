@@ -3,7 +3,7 @@
 using namespace std;
 
 Account::Account()
-	: id_(NULL - 1), name_(_NULL), surname_(_NULL),
+	: id_(NULL), name_(_NULL), surname_(_NULL),
 	birthday_(_NULL), hometown_(_NULL), current_city_(_NULL),
 	phone_number_(_NULL), age_(NULL), balance_(NULL),
 	username_(_NULL), password_(_NULL)
@@ -11,24 +11,24 @@ Account::Account()
 
 void Account::setNewFileName()
 {
-	cout << "Setting new file name is running . . .\n"
-		<< "Enter a file name: ";
+#ifdef _DEBUG_
+	std::cout << "Setting new file name is running . . .\n";
+#endif // _DEBUG_
 
-	// new cin input
-	cin.sync(); 
-	cin.clear();
+	std::cout << "Enter a file name: ";
+	std::cin.sync(); 
+	std::cin.clear();
 
-	// checking for cin incorrect work
-	if (cin.fail())
+	// checking for std::cin incorrect work
+	if (std::cin.fail())
 	{
-		cerr << "Error: cin has been failed.\n";
+		cerr << "Error: std::cin has been failed.\n";
 		return;
 	}
 
-
 	// a new file name
 	string s;
-	cin >> s;
+	std::cin >> s;
 
 	// checking for incorrect file name
 	if (s.empty())
@@ -39,7 +39,9 @@ void Account::setNewFileName()
 
 	reserve_file_name_ = s;
 
-	cout << "Setting new file name has been finished successfully.\n";
+#ifdef _DEBUG_
+	std::cout << "Setting new file name has been finished successfully.\n";
+#endif // _DEBUG_
 }
 
 bool Account::CheckFullName(const string& s)
@@ -265,7 +267,9 @@ const string& Account::GetPassword() const { return password_; }
 
 bool Account::createNewAccount()
 {
-	cout << "Starting processing the new account user.\n";
+	#ifdef _DEBUG_
+		std::cout << "Starting processing the new account user.\n";
+	#endif // _DEBUG_
 	
 	string name = "";
 	string surname = "";
@@ -278,119 +282,82 @@ bool Account::createNewAccount()
 	string usernameAttempt = "";
 	string passwordAttempt = "";
 
-	time(0);
+	srand((unsigned)time(0));
 	SetID(rand() % 1024);
-	cout << "Your ID is: " << id_ << '\n';
+	std::cout << "Your ID is: " << id_ << '\n';
 	
-	cout << "First name: ";
-	cin >> name;
+	std::cout << "First name: ";
+	std::cin >> name;
 	SetName(name);
 	
-	cout << "Second name: ";
-	cin >> surname;
+	std::cout << "Second name: ";
+	std::cin >> surname;
 	SetSurname(surname);
 	
-	cout << "Age: ";
-	cin >> age;
+	std::cout << "Age: ";
+	std::cin >> age;
 	SetAge(age);
 	
-	cout << "Birthday, format mm.dd.yyyy: ";
-	cin >> birthday;
+	std::cout << "Birthday, format mm.dd.yyyy: ";
+	std::cin >> birthday;
 	SetBirthday(birthday);
 	
-	cout << "Hometown: ";
-	cin >> hometown;
+	std::cout << "Hometown: ";
+	std::cin >> hometown;
 	SetHometown(hometown);
 	
-	cout << "Current city: ";
-	cin >> current_city;
+	std::cout << "Current city: ";
+	std::cin >> current_city;
 	SetCurrentCity(current_city);
 	
-	cout << "Phone number, format +380XXXXXXXXX: ";
-	cin >> phone_number;
+	std::cout << "Phone number, format +380XXXXXXXXX: ";
+	std::cin >> phone_number;
 	SetPhoneNumber(phone_number);
 
-	cout << "Current balance: ";
-	cin >> balance;
+	std::cout << "Current balance: ";
+	std::cin >> balance;
 	SetBalance(balance);
 
-	cout << "\nUsername: ";
-	cin >> usernameAttempt;
-	cout << "\nPassword: ";
-	cin >> passwordAttempt;
+	std::cout << "\nUsername: ";
+	std::cin >> usernameAttempt;
+	std::cout << "\nPassword: ";
+	std::cin >> passwordAttempt;
 	if (!setUsername(usernameAttempt) 
 		|| !setPassword(passwordAttempt))
 		return false;
 
-	cout << "Processing the new account user is finished successfully.\n";
+	#ifdef _DEBUG_
+		std::cout << "Processing the new account user is finished successfully.\n";
+	#endif // _DEBUG_
+	
 	return true;
 }
 
 bool Account::load()
 {
 	ifstream is(reserve_file_name_, ios::in | ios::binary);
-	if (!is.is_open() || is.fail())
-	{
-		cerr << "Error: loading with file "
-			<< reserve_file_name_ << " has been failed\n";
-		return false;
-	}
-
-	cout << "Loading is running . . .\n";
-
-	unsigned long long int id;
-	string name;
-	string surname;
-	unsigned short age;
-	string birthday;
-	string hometown;
-	string current_city;
-	string phone_number;
-	long double balance;
-	string username;
-	string password;
-
-	is >> id >> name
-		>> surname >> age >> birthday
-		>> hometown >> current_city
-		>> phone_number >> balance 
-		>> username >> password;
-
-	SetID(id);
-	SetName(name);
-	SetSurname(surname);
-	SetAge(age);
-	SetBirthday(birthday);
-	SetHometown(hometown);
-	SetCurrentCity(current_city);
-	SetPhoneNumber(phone_number);
-	SetBalance(balance);
-	setUsername(username);
-	setPassword(password);
-
-	cout << "Loading has been finished successfully.\n";
-	return true;
+	return ((is >> *this) ? true : false);
 }
 
-bool Account::logIn()
+int Account::logIn()
 {
 	bool i = 0;
 	while (i == 0)
 	{
 		system("cls");
-		cout << header << menu 
+		std::cout << header << menu 
 			<< "\n\nChoice: ";
 		char operation;
-		cin >> operation;
+		std::cin >> operation;
 
 		switch (toupper(operation))
 		{
 		case 'C':
 			i = createNewAccount();
+			return UNREGISTERED;
 			break;
 		case 'L':
-			i = load();
-			break;
+			return REGISTERED;
 		case 'E':
 			system("cls");
 			std::cout << header
@@ -399,26 +366,24 @@ bool Account::logIn()
 			exit(0);
 		}
 	}
-
-	cout << "Login successful";
 	
 	return true;
 }
 
 void Account::makeTransaction(Account* receiver, double amount)
-{
-	if (id_ == receiver->id_)
+{	
+	if (!receiver && (id_ == receiver->id_))
 	{
 		std::cout << "\nError: Incorrect transaction receiver.";
 		system("pause");
 		return;
 	}
 
-	cout << "\nMaking transaction ...";
+	std::cout << "\nMaking transaction ...";
 
-	// Cheking
+	// Checking
 	if (balance_ - amount < 0)
-		cout << "\nFailure: Not enough money."
+		std::cout << "\nFailure: Not enough money."
 			<< "\nOperation: transfering " << amount << "$"
 			<< "\nBalance: " << balance_;
 
@@ -438,8 +403,8 @@ void Account::toUp()
 {
 	// Checking connection 
 	std::string source_name = "g6i8f5t10_c3a8r3d9.txt";
-	std::ios::openmode source_mode = (ios::in | ios::binary);
-	ifstream source(source_name, source_mode);
+	std::ios::openmode source_mode = (ios::in | ios::out);
+	std::fstream source(source_name, source_mode);
 
 	if (!source.good() || !source.is_open())
 	{
@@ -449,18 +414,36 @@ void Account::toUp()
 	}
 
 	// Reading data
+	string used = " ";
 	double amount = 0.0;
-	source >> amount;
-	
-	// Checking data
-	if (!checkToUpAmount(amount)) 
+
+	source >> used;
+
+	if (used == "X")
 	{
+		std::cerr << "\nError: You haven't such permission.";
 		system("pause");
 		return;
 	}
+	else if (used == "O")
+	{
+		source >> amount;
+	
+		// Checking data
+		if (!checkToUpAmount(amount)) 
+		{
+			system("pause");
+			return;
+		}
 
-	// Actually to up
-	balance_ += amount;
+		// Actually to up
+		balance_ += amount;
+		std::cout << "\nSuccessful operation.";
+		system("pause");
+
+		source.write("X ", sizeof("X "));
+		source << amount;
+	}
 }
 
 bool Account::checkToUpAmount(double& amount)
@@ -473,17 +456,19 @@ bool Account::checkToUpAmount(double& amount)
 	return true;
 };
 
-ostream& operator<<(ostream& os, Account& acc)
+std::ostream& operator<<(std::ostream& os, Account& acc)
 {
 	if (os.fail())
 	{
-		cerr << "Error: Outputting account data from ostream failed.\n";
+		cerr << "Error: Outputting account data from std::ostream failed.\n";
 		return os;
 	}
 
-	cout << "Outputting is running . . .\n";
+	#ifdef _DEBUG_
+		std::cout << "Outputting is running . . .\n";
+	#endif // _DEBUG_
 
-	os << "\n\t\t\tAccount data" 
+	os << "\n\t\t\tAccount data"
 		<< "\nId:\t" << acc.GetID()
 		<< "\nFirst name:\t" << acc.GetName()
 		<< "\nSurname:\t" << acc.GetSurname()
@@ -497,19 +482,56 @@ ostream& operator<<(ostream& os, Account& acc)
 		<< "\nPassword:\t" << acc.GetPassword()
 		<< '\n';
 
-	cout << "Outputting has been finished successfully.\n";
+	#ifdef _DEBUG_
+		std::cout << "Outputting has been finished successfully.\n";
+	#endif // _DEBUG_
+
 	return os;
 }
+
+ofstream& operator<<(ofstream& os, Account& acc)
+{
+	if (!os.good())
+	{
+		std::cerr << "\nError: Outputting account data from ofstream failed.";
+		return os;
+	}
+
+	#ifdef _DEBUG_
+		std::cout << "\nOutputting is running . . .";
+	#endif // _DEBUG_
+
+	os << acc.GetID()
+		<< ' ' << acc.GetName()
+		<< ' ' << acc.GetSurname()
+		<< ' ' << acc.GetBirthday()
+		<< ' ' << acc.GetHometown()
+		<< ' ' << acc.GetCurrentCity()
+		<< ' ' << acc.GetPhoneNumber()
+		<< ' ' << acc.GetAge()
+		<< ' ' << std::fixed << setprecision(4) << acc.GetBalance()
+		<< ' ' << acc.GetUsername()
+		<< ' ' << acc.GetPassword() << ' ';
+
+	#ifdef _DEBUG_
+			std::cout << "\nOutputting has been finished successfully.";
+	#endif // _DEBUG_
+
+	return os;
+}
+
 ifstream& operator>>(ifstream& is, Account& acc)
 {
-	if (is.fail() || !is || is.eof())
+	if (!is.good())
 	{
-		cerr << "Error: loading with file "
-			<< "users.txt" << " has been failed\n";
+		cerr << "\nError: loading with file "
+			<< "users.txt" << " has been failed";
 		return is;
 	}
 
-	cout << "Loading is running . . .\n";
+	#ifdef _DEBUG_
+		std::cout << "\nLoading is running . . .";
+	#endif // _DEBUG_
 
 	unsigned long long int id = 0;
 	string name = _NULL;
@@ -524,14 +546,14 @@ ifstream& operator>>(ifstream& is, Account& acc)
 	string password = "";
 
 	is >> id >> name
-		>> surname >> age >> birthday
+		>> surname >> birthday
 		>> hometown >> current_city
-		>> phone_number >> balance
+		>> phone_number >> age >> balance
 		>> username >> password;
 
 	if (id == 0)
 	{
-		cout << "\nError: Empty user";
+		std::cout << "\nError: Empty user";
 		return is;
 	}
 

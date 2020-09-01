@@ -67,20 +67,16 @@ bool Bank::upload()
 	return true;
 }
 
-void Bank::setTransactionData(Account* receiver, double& amount)
+void Bank::setTransactionData(Account& receiver, double& amount, std::list<Account>::iterator& rec_it)
 {
 	// Transaction info.
 	int id = 0;
 	std::cout << "\nReciever (ID): ";
 	std::cin >> id;
-	receiver = findUser(id);
+	receiver = *findUser(id, rec_it);
 
-	if (receiver->GetID() == NULL)
-	{
-		std::cout << "There is no user with ID: " << id;
-		system("pause");
+	if (receiver.GetID() == NULL)
 		return;
-	}
 
 	std::cout << "\nAmount ($): ";
 	std::cin >> amount;
@@ -99,21 +95,32 @@ void Bank::services(Account& u)
 
 		double amount = 0.0;
 		Account* receiver = new Account();
+		std::list<Account>::iterator rec_it;
+		bool status = false;
 
 		switch (toupper(s))
 		{
 		case 'T':
-			setTransactionData(receiver, amount);
-			u.makeTransaction(receiver, amount);
+			setTransactionData(*receiver, amount, rec_it);
+			status = u.makeTransaction(*receiver, amount);
+			if (status)
+			{
+				std::list<Account>::iterator ins_it = users.erase(rec_it);
+				users.insert(ins_it, *receiver);
+			}
+			system("pause");
 			break;
 		case 'U':
 			u.toUp();
+			system("pause");
 			break;
 		case 'D':
 			std::cout << u;
+			system("pause");
 			break;
 		case 'A':
 			display_users();
+			system("pause");
 			break;
 		case 'E':
 			system("cls");
@@ -124,12 +131,18 @@ void Bank::services(Account& u)
 			system("pause");
 			return;
 		}
-		system("pause");
 	}
 }
 
 Account* Bank::signIn()
 {
+	if (users.size() == 0)
+	{
+		std::cout << "\n*\t*\t*\tThere are no users yet.\nYou can create your own -->";
+		system("pause");
+		return nullptr;
+	}
+
 	system("cls");
 	display_users();
 	
@@ -197,6 +210,19 @@ Account* Bank::findUser(long long int id)
 	for (auto i = users.begin(); i != users.end(); ++i)
 		if (i->GetID() == id)
 			return &(*i);
+
+	return nullptr;
+}
+
+Account* Bank::findUser(long long int id, std::list<Account>::iterator& rec_it)
+{
+	rec_it = users.end();
+	for (auto i = users.begin(); i != users.end(); ++i)
+		if (i->GetID() == id)
+		{
+			rec_it = i;
+			return &(*i);
+		}
 
 	return nullptr;
 }

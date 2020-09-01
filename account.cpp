@@ -297,11 +297,11 @@ bool Account::createNewAccount()
 	std::cout << "Age: ";
 	std::cin >> age;
 	SetAge(age);
-	
+
 	std::cout << "Birthday, format mm.dd.yyyy: ";
 	std::cin >> birthday;
 	SetBirthday(birthday);
-	
+
 	std::cout << "Hometown: ";
 	std::cin >> hometown;
 	SetHometown(hometown);
@@ -309,7 +309,7 @@ bool Account::createNewAccount()
 	std::cout << "Current city: ";
 	std::cin >> current_city;
 	SetCurrentCity(current_city);
-	
+
 	std::cout << "Phone number, format +380XXXXXXXXX: ";
 	std::cin >> phone_number;
 	SetPhoneNumber(phone_number);
@@ -370,33 +370,38 @@ int Account::logIn()
 	return true;
 }
 
-void Account::makeTransaction(Account* receiver, double amount)
-{	
-	if (!receiver && (id_ == receiver->id_))
+bool Account::makeTransaction(Account& receiver, double amount)
+{
+	if ((id_ == receiver.id_) || (receiver.id_ == NULL))
 	{
 		std::cout << "\nError: Incorrect transaction receiver.";
 		system("pause");
-		return;
+		return false;
 	}
 
 	std::cout << "\nMaking transaction ...";
 
 	// Checking
 	if (balance_ - amount < 0)
+	{
 		std::cout << "\nFailure: Not enough money."
-			<< "\nOperation: transfering " << amount << "$"
-			<< "\nBalance: " << balance_;
+		<< "\nOperation: transfering " << amount << "$"
+		<< "\nBalance: " << balance_;
+		return false;
+	}
+
+	// Transfering money
+	SetBalance(balance_ - amount);
+	receiver.balance_ += amount;
 
 	// Transaction history
 	std::ostringstream msg;
 	msg << "\nOperation: transfering money;\nSender: " << id_
-		<< ";\nReceiver: " << receiver->GetID() << ";\nAmount: " << amount
+		<< ";\nReceiver: " << receiver.id_ << ";\nAmount: " << amount
 		<< ";\nBalance: " << balance_;
-	// history.push_back(msg.str());
-
-	// Transfering money
-	SetBalance(balance_ - amount);
-	receiver->balance_ += amount;
+	std::cout << msg.str();
+	
+	return true;
 }
 
 void Account::toUp()
@@ -472,11 +477,11 @@ std::ostream& operator<<(std::ostream& os, Account& acc)
 		<< "\nId:\t" << acc.GetID()
 		<< "\nFirst name:\t" << acc.GetName()
 		<< "\nSurname:\t" << acc.GetSurname()
+		<< "\nAge:\t" << acc.GetAge()
 		<< "\nBirthday:\t" << acc.GetBirthday()
 		<< "\nHometown:\t" << acc.GetHometown()
 		<< "\nCurrent city:\t" << acc.GetCurrentCity()
 		<< "\nPhone number:\t" << acc.GetPhoneNumber()
-		<< "\nAge:\t" << acc.GetAge()
 		<< "\nBalance:\t" << fixed << setprecision(4) << acc.GetBalance()
 		<< "\nUsername:\t" << acc.GetUsername()
 		<< "\nPassword:\t" << acc.GetPassword()
@@ -504,11 +509,11 @@ ofstream& operator<<(ofstream& os, Account& acc)
 	os << acc.GetID()
 		<< ' ' << acc.GetName()
 		<< ' ' << acc.GetSurname()
+		<< ' ' << acc.GetAge()
 		<< ' ' << acc.GetBirthday()
 		<< ' ' << acc.GetHometown()
 		<< ' ' << acc.GetCurrentCity()
 		<< ' ' << acc.GetPhoneNumber()
-		<< ' ' << acc.GetAge()
 		<< ' ' << std::fixed << setprecision(4) << acc.GetBalance()
 		<< ' ' << acc.GetUsername()
 		<< ' ' << acc.GetPassword() << ' ';
@@ -533,22 +538,22 @@ ifstream& operator>>(ifstream& is, Account& acc)
 		std::cout << "\nLoading is running . . .";
 	#endif // _DEBUG_
 
-	unsigned long long int id = 0;
-	string name = _NULL;
-	string surname = _NULL;
+	long long int id = 0;
+	string name = "";
+	string surname = "";
 	unsigned short age = 0;
-	string birthday = _NULL;
-	string hometown = _NULL;
-	string current_city = _NULL;
-	string phone_number = _NULL;
+	string birthday = "";
+	string hometown = "";
+	string current_city = "";
+	string phone_number = "";
 	long double balance = 0.0;
 	string username = "";
 	string password = "";
 
 	is >> id >> name
-		>> surname >> birthday
+		>> surname >> age >> birthday
 		>> hometown >> current_city
-		>> phone_number >> age >> balance
+		>> phone_number >> balance
 		>> username >> password;
 
 	if (id == 0)

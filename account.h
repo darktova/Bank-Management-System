@@ -72,7 +72,7 @@ public:
 	int logIn();
 
 	// id, amount
-	void makeTransaction(Account*, double);
+	bool makeTransaction(Account&, double);
 	
 	void toUp();
 };

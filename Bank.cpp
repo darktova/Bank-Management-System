@@ -73,6 +73,8 @@ void Bank::setTransactionData(Account& receiver, double& amount, std::list<Accou
 	// ID
 	int id = 0;
 	std::cout << "\nReciever (ID): ";
+	std::cin.tie();
+	std::cin.clear();
 	std::cin >> id;
 	
 	// receiver
@@ -83,6 +85,8 @@ void Bank::setTransactionData(Account& receiver, double& amount, std::list<Accou
 
 	// Amount
 	std::cout << "\nAmount ($): ";
+	std::cin.tie();
+	std::cin.clear();
 	std::cin >> amount;
 }
 
@@ -95,6 +99,8 @@ void Bank::services(Account& u)
 		std::cout << header << operations 
 			<< "\nBalance: " << u.GetBalance() << "$"
 			<< "\nChoice: ";
+		std::cin.tie();
+		std::cin.clear();
 		std::cin >> s;
 
 		double amount = 0.0;

@@ -382,7 +382,7 @@ bool Account::makeTransaction(Account& receiver, double amount)
 	std::cout << "\nMaking transaction ...";
 
 	// Checking
-	if (balance_ - amount < 0)
+	if ((amount <= 0) || (balance_ - amount < 0))
 	{
 		std::cout << "\nFailure: Not enough money."
 		<< "\nOperation: transfering " << amount << "$"
@@ -408,10 +408,9 @@ void Account::toUp()
 {
 	// Checking connection 
 	std::string source_name = "g6i8f5t10_c3a8r3d9.txt";
-	std::ios::openmode source_mode = (ios::in | ios::out);
-	std::fstream source(source_name, source_mode);
+	std::ifstream source(source_name);
 
-	if (!source.good() || !source.is_open())
+	if (!source.good())
 	{
 		std::cerr << "\nError: To upping has been failed.";
 		system("pause");
@@ -419,10 +418,10 @@ void Account::toUp()
 	}
 
 	// Reading data
-	string used = " ";
+	std::string used = "X";
 	double amount = 0.0;
 
-	source >> used;
+	source >> used >> amount;
 
 	if (used == "X")
 	{
@@ -432,8 +431,6 @@ void Account::toUp()
 	}
 	else if (used == "O")
 	{
-		source >> amount;
-	
 		// Checking data
 		if (!checkToUpAmount(amount)) 
 		{
@@ -446,6 +443,8 @@ void Account::toUp()
 		std::cout << "\nSuccessful operation.";
 		system("pause");
 
+		source.close();
+		std::ofstream source(source_name, ios::out);
 		source.write("X ", sizeof("X "));
 		source << amount;
 	}

@@ -70,14 +70,18 @@ bool Bank::upload()
 void Bank::setTransactionData(Account& receiver, double& amount, std::list<Account>::iterator& rec_it)
 {
 	// Transaction info.
+	// ID
 	int id = 0;
 	std::cout << "\nReciever (ID): ";
 	std::cin >> id;
-	receiver = *findUser(id, rec_it);
-
-	if (receiver.GetID() == NULL)
+	
+	// receiver
+	Account* aim = findUser(id, rec_it);
+	if (!aim || aim->GetID() == 0)
 		return;
+	receiver = *aim;
 
+	// Amount
 	std::cout << "\nAmount ($): ";
 	std::cin >> amount;
 }

@@ -2,9 +2,9 @@
 
 int main()
 {
-	Bank* Privat24 = new Bank();
+	Bank* TovaBank = new Bank();
 	
-	Privat24->launch();
+	TovaBank->launch();
 
-	delete Privat24;
+	delete TovaBank;
 }

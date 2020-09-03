@@ -9,47 +9,13 @@ Account::Account()
 	username_(_NULL), password_(_NULL)
 {}
 
-void Account::setNewFileName()
-{
-#ifdef _DEBUG_
-	std::cout << "Setting new file name is running . . .\n";
-#endif // _DEBUG_
-
-	std::cout << "Enter a file name: ";
-	std::cin.sync(); 
-	std::cin.clear();
-
-	// checking for std::cin incorrect work
-	if (std::cin.fail())
-	{
-		cerr << "Error: std::cin has been failed.\n";
-		return;
-	}
-
-	// a new file name
-	string s;
-	std::cin >> s;
-
-	// checking for incorrect file name
-	if (s.empty())
-	{
-		cerr << "Error: new file name is incorrect.\n";
-		return;
-	}
-
-	reserve_file_name_ = s;
-
-#ifdef _DEBUG_
-	std::cout << "Setting new file name has been finished successfully.\n";
-#endif // _DEBUG_
-}
-
 bool Account::CheckFullName(const string& s)
 {
 	size_t len = s.size();
 	if (len == 0 || len > 50)
 	{
 		cerr << "Error: Incorrect name length.\n";
+		system("pause");
 		return false;
 	}
 
@@ -57,6 +23,7 @@ bool Account::CheckFullName(const string& s)
 		if (!isalpha(s[i]))
 		{
 			cerr << "Error: Incorrect name contents.\n";
+			system("pause");
 			return false;
 		}
 
@@ -67,7 +34,8 @@ bool Account::CheckAge(unsigned short age)
 {
 	if (age < 0 || age > 150)
 	{
-		cerr << "Error: age borders has been broken.\n";
+		cerr << "\nError: age borders has been broken.";
+		system("pause");
 		return false;
 	}
 
@@ -79,7 +47,8 @@ bool Account::CheckBirthday(const string& s)
 	// checking for incorrect length
 	if (s.size() != 10)
 	{
-		cerr << "Error: Incorrect birthday length.\n";
+		cerr << "\nError: Incorrect birthday length.";
+		system("pause");
 		return false;
 	}
 
@@ -91,7 +60,8 @@ bool Account::CheckBirthday(const string& s)
 	
 	if (incorrect_format)
 	{
-		cerr << "Error: Incorrect birthday format or unavailable chars.\n";
+		cerr << "\nError: Incorrect birthday format or unavailable chars.";
+		system("pause");
 		return false;
 	}
 
@@ -125,7 +95,8 @@ bool Account::CheckTown(const string& s)
 	// checking for length
 	if (s.empty() || s.length() > 50)
 	{
-		cerr << "Error: Incorrect hometown length.\n";
+		cerr << "\nError: Incorrect hometown length.";
+		system("pause");
 		return false;
 	}
 
@@ -133,7 +104,8 @@ bool Account::CheckTown(const string& s)
 	for (unsigned i = 0, len = s.size(); i < len; ++i)
 		if (!isalpha(s[i]))
 		{
-			cerr << "Error: hometown has incorrect contents.\n";
+			cerr << "\nError: hometown has incorrect contents.";
+			system("pause");
 			return false;
 		}
 
@@ -145,8 +117,9 @@ bool Account::CheckPhoneNumber(const string& s)
 	// checking for correct size and starting from '+'
 	if (s.size() != 13 || s[0] != '+')
 	{
-		cerr << "Error: Incorrect phone number length "
-			<< "or starts no with \'+\'.\n";
+		std::cerr << "\nError: Incorrect phone number length "
+			<< "or starts no with \'+\'.";
+		system("pause");
 		return false;
 	}
 
@@ -154,7 +127,8 @@ bool Account::CheckPhoneNumber(const string& s)
 	for (unsigned i = 1; i < 13; ++i)
 		if (!isdigit(s[i]))
 		{
-			cerr << "Error: Phone number has no digit.\n";
+			cerr << "\nError: Phone number has no digit.";
+			system("pause");
 			return false;
 		}
 
@@ -165,7 +139,8 @@ bool Account::CheckBalance(long double b)
 {
 	if (b < 0 || b > 10e10)
 	{
-		cerr << "Error: balance borders has been broken.\n";
+		cerr << "\nError: balance borders has been broken.";
+		system("pause");
 		return false;
 	}
 
@@ -177,52 +152,84 @@ void Account::SetID(unsigned long long int id)
 	id_ = id;
 }
 
-void Account::SetName(const string& s)
+bool Account::SetName(const string& s)
 {
 	if (CheckFullName(s))
+	{
 		name_ = s;
+		return true;
+	}
+	return false;
 }
 
-void Account::SetSurname(const string& s)
+bool Account::SetSurname(const string& s)
 {
 	if (CheckFullName(s))
-		surname_ = s;
+	{
+		surname_ = s;		
+		return true;
+	}
+	return false;
 }
 
-void Account::SetAge(unsigned short age)
+bool Account::SetAge(unsigned short age)
 {
 	if (CheckAge(age))
+	{
 		age_ = age;
+		return true;
+	}
+	return false;
 }
 
-void Account::SetBirthday(const string& s)
+bool Account::SetBirthday(const string& s)
 {
 	if (CheckBirthday(s))
+	{
 		birthday_ = s;
+		return true;
+	}
+	return false;
 }
 
-void Account::SetHometown(const string& s)
+bool Account::SetHometown(const string& s)
 {
 	if (CheckTown(s))
+	{
 		hometown_ = s;
+		return true;
+	}
+	return false;
 }
 
-void Account::SetCurrentCity(const string& s)
+bool Account::SetCurrentCity(const string& s)
 {
 	if (CheckTown(s))
+	{
 		current_city_ = s;
+		return true;
+	}
+	return false;
 }
 
-void Account::SetPhoneNumber(const string& s)
+bool Account::SetPhoneNumber(const string& s)
 {
-	if (CheckPhoneNumber(s))
+	if (CheckPhoneNumber(s)) 
+	{
 		phone_number_ = s;
+		return true;
+	}
+	return false;
 }
 
-void Account::SetBalance(long double balance)
+bool Account::SetBalance(long double balance)
 {
 	if (CheckBalance(balance))
+	{
 		balance_ = balance;
+		return true;
+	}
+	return false;
 }
 
 bool Account::setUsername(const string& u)
@@ -267,10 +274,10 @@ const string& Account::GetPassword() const { return password_; }
 
 bool Account::createNewAccount()
 {
-	#ifdef _DEBUG_
-		std::cout << "Starting processing the new account user.\n";
-	#endif // _DEBUG_
-	
+#ifdef _DEBUG_
+	std::cout << "Starting processing the new account user.\n";
+#endif // _DEBUG_
+
 	string name = "";
 	string surname = "";
 	unsigned short age = 0;
@@ -284,59 +291,59 @@ bool Account::createNewAccount()
 
 	srand((unsigned)time(0));
 	SetID(rand() % 1024);
-	std::cout << "Your ID is: " << id_ << '\n';
-	
-	std::cout << "First name: ";
+
+	std::cout << "\nYour ID is: " << id_;
+	std::cout << "\nFirst name [a-Z]: ";
 	std::cin >> name;
-	SetName(name);
-	
-	std::cout << "Second name: ";
+	std::cout << "Second name [a-Z]: ";
 	std::cin >> surname;
-	SetSurname(surname);
-	
-	std::cout << "Age: ";
+	std::cout << "Age [0-150]: ";
 	std::cin >> age;
-	SetAge(age);
-
-	std::cout << "Birthday, format mm.dd.yyyy: ";
+	std::cout << "Birthday, mm.dd.yyyy [01.30.2000]: ";
 	std::cin >> birthday;
-	SetBirthday(birthday);
-
-	std::cout << "Hometown: ";
+	std::cout << "Hometown [a-Z]: ";
+	std::cin.tie();
+	std::cin.clear();
 	std::cin >> hometown;
-	SetHometown(hometown);
-	
-	std::cout << "Current city: ";
+	std::cout << "\nCurrent city [a-Z]: ";
+	std::cin.tie();
+	std::cin.clear();
 	std::cin >> current_city;
-	SetCurrentCity(current_city);
-
-	std::cout << "Phone number, format +380XXXXXXXXX: ";
+	std::cout << "Phone number, +380XXXXXXXXX: ";
 	std::cin >> phone_number;
-	SetPhoneNumber(phone_number);
-
-	std::cout << "Current balance: ";
+	std::cout << "Current balance [0.000, inf]: ";
 	std::cin >> balance;
-	SetBalance(balance);
-
-	std::cout << "\nUsername: ";
+	std::cout << "Username [a-Z, 0-9]: ";
 	std::cin >> usernameAttempt;
-	std::cout << "\nPassword: ";
+	std::cout << "Password [a-Z, 0-9]: ";
 	std::cin >> passwordAttempt;
-	if (!setUsername(usernameAttempt) 
-		|| !setPassword(passwordAttempt))
-		return false;
+
+	bool good = !(!SetName(name) || !SetSurname(surname)
+		|| !SetAge(age) || !SetBirthday(birthday)
+		|| !SetHometown(hometown) || !SetCurrentCity(current_city)
+		|| !SetPhoneNumber(phone_number) || !SetBalance(balance)
+		|| !setUsername(usernameAttempt) || !setPassword(passwordAttempt));
+
+	if (!good)
+	{
+		std::cerr << "\nCreating account failed. Try again.";
+		system("pause");
+	}
 
 	#ifdef _DEBUG_
 		std::cout << "Processing the new account user is finished successfully.\n";
 	#endif // _DEBUG_
-	
-	return true;
+
+	return good;
 }
 
-bool Account::load()
+void Account::signOut()
 {
-	ifstream is(reserve_file_name_, ios::in | ios::binary);
-	return ((is >> *this) ? true : false);
+	system("cls");
+	std::cout << header
+		<< "\n\nLogging out from the Bank.";
+	system("pause");
+	exit(0);
 }
 
 int Account::logIn()
@@ -354,16 +361,18 @@ int Account::logIn()
 		{
 		case 'C':
 			i = createNewAccount();
+			if (!i)
+			{
+				std::cerr << "\nYou have mistakes. Try again next time.";
+				return NULL;
+			}
 			return UNREGISTERED;
 			break;
 		case 'L':
 			return REGISTERED;
 		case 'E':
-			system("cls");
-			std::cout << header
-				<< "\n\nLogging out from the Bank.";
-			system("pause");
-			exit(0);
+			signOut();
+			break;
 		}
 	}
 	
@@ -455,6 +464,7 @@ bool Account::checkToUpAmount(double& amount)
 	if (isdigit(amount) && amount && (amount < 10e9))
 	{
 		std::cerr << "\nError: Incorrect sum.";
+		system("pause");
 		return false;
 	}
 	return true;
@@ -575,5 +585,3 @@ ifstream& operator>>(ifstream& is, Account& acc)
 
 	return is;
 }
-
-string Account::reserve_file_name_ = "account.txt";

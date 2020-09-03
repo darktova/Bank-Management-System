@@ -93,32 +93,10 @@ void Bank::setTransactionData(Account& receiver, double& amount, std::list<Accou
 void Bank::services(Account& u)
 {
 	while (true)
-	{
-		system("cls");
-		char s = ' ';
-		std::cout << header << operations 
-			<< "\nBalance: " << u.GetBalance() << "$"
-			<< "\nChoice: ";
-		std::cin.tie();
-		std::cin.clear();
-		std::cin >> s;
-
-		double amount = 0.0;
-		Account* receiver = new Account();
-		std::list<Account>::iterator rec_it;
-		bool status = false;
-
-		switch (toupper(s))
+		switch (selectServ(u))
 		{
 		case 'T':
-			setTransactionData(*receiver, amount, rec_it);
-			status = u.makeTransaction(*receiver, amount);
-			if (status)
-			{
-				std::list<Account>::iterator ins_it = users.erase(rec_it);
-				users.insert(ins_it, *receiver);
-			}
-			system("pause");
+			makeTransaction(u);
 			break;
 		case 'U':
 			u.toUp();
@@ -129,19 +107,16 @@ void Bank::services(Account& u)
 			system("pause");
 			break;
 		case 'A':
-			display_users();
-			system("pause");
+			displayAll();
 			break;
+		case 'R':
+			deleteUser(u);
+			logOut();
+			return;
 		case 'E':
-			system("cls");
-			std::cout << header
-				<< "\n\nLogging out from the Bank.";
-			save();
-			upload();
-			system("pause");
+			logOut();
 			return;
 		}
-	}
 }
 
 Account* Bank::signIn()
@@ -184,22 +159,86 @@ Account* Bank::signIn()
 	return nullptr;
 }
 
+char Bank::selectServ(Account& u)
+{
+	system("cls");
+
+	char s = ' ';
+	std::cout << header << operations
+		<< "\nBalance: " << u.GetBalance() << "$"
+		<< "\nChoice: ";
+	std::cin.tie();
+	std::cin.clear();
+	std::cin >> s;
+
+	return toupper(s);
+}
+
+void Bank::logOut()
+{
+	system("cls");
+	std::cout << header
+		<< "\n\nLogging out from the Bank.";
+	save();
+	upload();
+	system("pause");
+
+}
+
+void Bank::displayAll()
+{
+	display_users();
+	system("pause");
+}
+
+void Bank::deleteUser(Account& u)
+{
+	removeUser(u.GetID());
+}
+
+void Bank::makeTransaction(Account& u)
+{
+	double amount = 0.0;
+	Account* receiver = new Account();
+	std::list<Account>::iterator rec_it;
+	bool status = false;
+
+	setTransactionData(*receiver, amount, rec_it);
+	status = u.makeTransaction(*receiver, amount);
+
+	if (status)
+		replaceUser(receiver, rec_it);
+
+	system("pause");
+}
+
 void Bank::launch()
 {
 	while (true)
 	{
 		Account* user = new Account();
 		int status = user->logIn();
-		
-		if (status == UNREGISTERED)
-			addUser(user);
-		else if (status == REGISTERED)
-			user = signIn();
 
-		if (user)
-			services(*user);	
-	
-		std::cout << "\nUser isn't extist.";
+		switch (status)
+		{
+		case NULL:
+			continue;
+			break;
+		case UNREGISTERED:
+			addUser(user);
+			break;
+		case REGISTERED:
+			user = signIn();
+			break;
+		}
+
+		if (!user)
+		{	
+			std::cerr << "\nUser isn't extist.";
+			continue;
+		}
+
+		services(*user);
 	}
 }
 
@@ -207,13 +246,24 @@ void Bank::addUser(Account* u)
 {
 	if (!u)
 	{
-		std::cout << "Empty user!\n";
+		std::cerr << "Empty user!\n";
 		return;
 	}
 	users.push_back(*u);
 }
 
-//void Bank::removeUser(long long int){}
+std::list<Account>::iterator Bank::removeUser(long long int id)
+{
+	std::list<Account>::iterator u_it;
+	findUser(id, u_it);
+	return users.erase(u_it);
+}
+
+void Bank::replaceUser(Account* u, std::list<Account>::iterator rec_it)
+{
+	std::list<Account>::iterator ins_it = users.erase(rec_it);
+	users.insert(ins_it, *u);
+}
 
 Account* Bank::findUser(long long int id)
 {

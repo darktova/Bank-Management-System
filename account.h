@@ -4,9 +4,7 @@
 class Account
 {
 private:
-	
-	// name where to write, read into, from file +
-	static string reserve_file_name_;
+
 	unsigned long long int id_;
 	string name_;
 	string surname_;
@@ -17,9 +15,6 @@ private:
 	string phone_number_;
 	long double balance_;
 	string username_, password_;
-	
-	// set the file name by user input (account.txt, so on). +
-	void setNewFileName();
 
 	// checking data correction +
 	bool CheckFullName(const string&);
@@ -30,8 +25,7 @@ private:
 	bool CheckBalance(long double);
 	bool checkToUpAmount(double&);
 
-	// loading from account.txt +
-	bool load();
+	void signOut();
 
 public:
 
@@ -41,14 +35,14 @@ public:
 	// setters for private data members +
 	// set new value to account id 
 	void SetID(unsigned long long int);
-	void SetName(const string&);
-	void SetSurname(const string&);
-	void SetAge(unsigned short);
-	void SetBirthday(const string&);
-	void SetHometown(const string&);
-	void SetCurrentCity(const string&);
-	void SetPhoneNumber(const string&);
-	void SetBalance(long double);
+	bool SetName(const string&);
+	bool SetSurname(const string&);
+	bool SetAge(unsigned short);
+	bool SetBirthday(const string&);
+	bool SetHometown(const string&);
+	bool SetCurrentCity(const string&);
+	bool SetPhoneNumber(const string&);
+	bool SetBalance(long double);
 	bool setUsername(const string&);
 	bool setPassword(const string&);
 

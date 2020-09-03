@@ -36,6 +36,7 @@ static const char* operations =
 	"\n\n\'U\' = Top-up"
 	"\n\n\'D\' = Display"
 	"\n\n\'A\' = Display users"
+	"\n\n\'R\' = Delete account"
 	"\n\n\'E\' = Safe exit"
 	"\t";
 

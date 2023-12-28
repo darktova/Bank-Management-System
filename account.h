@@ -1,10 +1,8 @@
 #pragma once
-#include "Data.h"
+#include "Constants.h"
 
 class Account
 {
-private:
-
 	unsigned long long int id_;
 	string name_;
 	string surname_;
@@ -14,7 +12,8 @@ private:
 	string current_city_;
 	string phone_number_;
 	long double balance_;
-	string username_, password_;
+	string username_;
+	string password_;
 
 	// checking data correction +
 	bool CheckFullName(const string&);
